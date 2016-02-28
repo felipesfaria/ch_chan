@@ -23,6 +23,10 @@ if ( CGAL_FOUND )
 
     include_directories (BEFORE "include")
 
+  include_directories(PointsGenerator)
+  add_subdirectory(PointsGenerator)
+  include_directories(PointsGenerator_Tests)
+  add_subdirectory(PointsGenerator_Tests)
   create_single_source_cgal_program( "ch_chan.cpp" )
   create_single_source_cgal_program( "ch_from_cin_to_cout.cpp" )
   create_single_source_cgal_program( "ch_graham_anderson.cpp" )
