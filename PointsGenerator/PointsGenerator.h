@@ -1,11 +1,10 @@
 //
 // Created by felipesfaria on 28/02/16.
 //
-
-#ifndef CALENDAR_POINTSGENERATOR_H
-#define CALENDAR_POINTSGENERATOR_H
+#pragma once
 #define POINTS_RANGE 100
 #define PI 3.14159265
+#include "../Utils/Utils.h"
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <vector>
 
@@ -23,6 +22,3 @@ public:
     static Point_2 *GenerateCircleHull(int size);
     static Point_2 *GenerateConvexHull(int nVertices, int nPoints);
 };
-
-
-#endif //CALENDAR_POINTSGENERATOR_H

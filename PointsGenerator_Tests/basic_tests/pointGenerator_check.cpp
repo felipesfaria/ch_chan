@@ -166,7 +166,59 @@ TEST_F(PointsGeneratorFixture, GenerateCircleHull_DistributionIsRegular_Test) {
     double centerDistributionX = 0;
     double centerDistributionY = 0;
     double tolerance = 5;
-    bool distributionIsRandom = abs(avgX-centerDistributionX)<tolerance && abs(avgY-centerDistributionY)<tolerance;
-    EXPECT_TRUE(distributionIsRandom);
+    bool DistributionIsRegular = abs(avgX-centerDistributionX)<tolerance && abs(avgY-centerDistributionY)<tolerance;
+    EXPECT_TRUE(DistributionIsRegular);
+    free(points);
+}
+
+TEST_F(PointsGeneratorFixture, GenerateConvexHull_NotAllPointAreTheSame_Test) {
+    int nVertices = 10;
+    int nPoints = 10;
+    Point_2* points = PointsGenerator::GenerateConvexHull(nVertices,nPoints);
+    double firstX = points[0].x();
+    double firstY = points[0].y();
+    bool allPointsAreTheSame = true;
+    for(int i=1;i<nPoints;i++){
+        if(points[i].x() != firstX || points[i].y()!=firstY){
+            allPointsAreTheSame = false;
+            break;
+        }
+    }
+    EXPECT_FALSE(allPointsAreTheSame);
+    free(points);
+}
+
+TEST_F(PointsGeneratorFixture, GenerateConvexHull_ConvexHullSizeIsCorrect_Test) {
+    int nVertices = 10;
+    int nPoints = 10;
+    Point_2* points = PointsGenerator::GenerateConvexHull(nVertices,nPoints);
+    Point_2* result = (Point_2*)malloc(nPoints*sizeof(Point_2));
+
+    Point_2 *ptr = CGAL::ch_graham_andrew( points, points+nPoints, result );
+    int resultSize = ptr-result;
+    int actual = resultSize;
+    int expected = nVertices;
+    EXPECT_EQ(expected,actual);
+    free(points);
+    free(result);
+}
+
+TEST_F(PointsGeneratorFixture, GenerateConvexHull_DistributionIsRegular_Test) {
+    int nVertices = 3;
+    int nPoints = 1<<10;
+    Point_2* points = PointsGenerator::GenerateConvexHull(nVertices,nPoints);
+    double avgX = 0;
+    double avgY = 0;
+    for(int i=0;i<nPoints;i++){
+        avgX += points[i].x();
+        avgY += points[i].y();
+    }
+    avgX /=nPoints;
+    avgY /=nPoints;
+    double centerDistributionX = 0;
+    double centerDistributionY = 0;
+    double tolerance = 5;
+    bool DistributionIsRegular = abs(avgX-centerDistributionX)<tolerance && abs(avgY-centerDistributionY)<tolerance;
+    EXPECT_TRUE(DistributionIsRegular);
     free(points);
 }

@@ -19,4 +19,8 @@ public:
     static float isLeft( Point_2 P0, Point_2 P1, Point_2 P2 );
 
     static bool isInside(Point_2 *points, Point_2 point, int size);
+
+    static double RandomDouble(int max);
+
+    static double RandomNumberBetween(double min, double max);
 };

@@ -31,3 +31,11 @@ bool Utils::isInside(Point_2 *points,Point_2 point, int size){
     }
     return true;
 }
+
+double Utils::RandomNumberBetween(double min, double max){
+    return (max - min) * ( (double)rand() / (double)RAND_MAX ) + min;
+}
+
+double Utils::RandomDouble(int max = 1){
+    return ((double) rand() / (RAND_MAX))*max;
+}
