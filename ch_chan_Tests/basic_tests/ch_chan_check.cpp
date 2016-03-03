@@ -47,7 +47,6 @@ TEST_F(ch_chanFixture, ConvexHullOfSinglePoint){
     Point_2 *ptr = CGAL::ch_graham_andrew(points,points+1,result);
     int expected = 1;
     int actual = ptr-result;
-
     EXPECT_EQ(expected,actual);
 }
 
