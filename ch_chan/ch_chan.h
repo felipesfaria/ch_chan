@@ -13,6 +13,5 @@ class ch_chan {
 public:
     static vector<Point_2*> hulls;
     static Point_2* FindHull(Point_2* start, Point_2* end, Point_2* result);
-    static vector<Point_2 *> SplitPoints(Point_2 *start, Point_2 *end, int m);
     static vector<vector< Point_2 > > GetSubHulls(Point_2 *start, Point_2 *end, int m);
 };
