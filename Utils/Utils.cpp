@@ -32,6 +32,18 @@ bool Utils::isInside(Point_2 *points,Point_2 point, int size){
     return true;
 }
 
+bool Utils::isInside(vector<Point_2> points,Point_2 point){
+    int size = points.size();
+    float isLeft = Utils::isLeft(points[size-1],points[0],point);
+    if(isLeft>=0) return false;
+
+    for(int i = 1; i<size;i++){
+        isLeft = Utils::isLeft(points[i-1],points[i],point);
+        if(isLeft>=0) return false;
+    }
+    return true;
+}
+
 double Utils::RandomNumberBetween(double min, double max){
     return (max - min) * ( (double)rand() / (double)RAND_MAX ) + min;
 }

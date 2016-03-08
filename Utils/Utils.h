@@ -23,4 +23,6 @@ public:
     static double RandomDouble(int max);
 
     static double RandomNumberBetween(double min, double max);
+
+    static bool isInside(vector<Point_2> points, Point_2 point);
 };
