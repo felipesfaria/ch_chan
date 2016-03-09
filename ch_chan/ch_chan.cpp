@@ -50,7 +50,7 @@ vector<vector< Point_2 >> ch_chan::GetSubHulls(Point_2 *start, Point_2 *end, int
 }
 
 //Returns first point of the convexHull with the leftmost point
-void ch_chan::FindLeftmostHull(vector<vector<Point_2> > hulls, int &hIndex, int &pIndex) {
+void ch_chan::FindLeftmostHull(const vector<vector<Point_2> > &hulls, int &hIndex, int &pIndex) {
     double minX = 9999;
     for(int i =0;i<hulls.size();i++){
         vector<Point_2> hullI = hulls[i];
@@ -75,6 +75,7 @@ int ch_chan::Rtangent_PointPolyC( Point_2 P, vector<Point_2> V )
     int     a, b, c;            // indices for edge chain endpoints
     int     upA, dnC;           // test for up direction of edges a and c
     int n = V.size();
+    V.push_back(V[0]);
 
     // rightmost tangent = maximum for the isLeft() ordering
     // test if V[0] is a local maximum
@@ -82,7 +83,6 @@ int ch_chan::Rtangent_PointPolyC( Point_2 P, vector<Point_2> V )
         return 0;               // V[0] is the maximum tangent point
 
     for (a=0, b=n;;) {          // start chain = [0,n] with V[n]=V[0]
-        cout<<"loop start"<<endl;
         c = (a + b) / 2;        // midpoint of [a,b], and 0<c<n
         dnC = below(P, V[c+1], V[c]);
         if (dnC && !above(P, V[c-1], V[c]))
@@ -114,7 +114,7 @@ int ch_chan::Rtangent_PointPolyC( Point_2 P, vector<Point_2> V )
     }
 }
 
-void ch_chan::NextPair(vector<vector<Point_2>> hulls, int &hIndex, int &pIndex){
+void ch_chan::NextPair(const vector<vector<Point_2>> &hulls, int &hIndex, int &pIndex){
     int myHullIndex = hIndex;
     Point_2 p = hulls[hIndex][pIndex];
     hIndex = hIndex;
@@ -122,12 +122,7 @@ void ch_chan::NextPair(vector<vector<Point_2>> hulls, int &hIndex, int &pIndex){
     Point_2 bestGuess = hulls[hIndex][pIndex];
     for(int i = 0; i<hulls.size();i++){
         if(i==myHullIndex) continue;
-        std::cout<<"p:"<<p.x()<<","<<p.y()<<std::endl;
-        for(int j=0;j<hulls[i].size();j++)
-            std::cout<<"p:"<<hulls[i][j].x()<<","<<hulls[i][j].y();
-        std::cout<<endl;
         int index = Rtangent_PointPolyC(p,hulls[i]);
-        cout<<"Left the tangent abys!"<<endl;
         Point_2 guess = hulls[i][index];
         //TODO tratar pontos colineares
         if(Utils::isLeft(p,bestGuess,guess)<0){

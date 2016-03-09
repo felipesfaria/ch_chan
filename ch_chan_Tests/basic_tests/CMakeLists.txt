@@ -6,3 +6,4 @@ add_executable(runch_chanTests
 target_link_libraries(runch_chanTests gtest gtest_main)
 target_link_libraries(runch_chanTests ch_chan)
 target_link_libraries(runch_chanTests Utils)
+target_link_libraries(runch_chanTests PointsGenerator)
