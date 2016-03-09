@@ -3,8 +3,19 @@
 //
 #include <iostream>
 #include "ch_chan.h"
+#include "SDL.h"
+
+#define USE_SDL 1
+
+#if USE_SDL
+static SDL* sdl;
+#endif
 
 Point_2* ch_chan::FindHull(Point_2* start, Point_2* end, Point_2* result){
+#if USE_SDL
+    sdl = new SDL(1280, 720, Point_2(-1,-1), Point_2(11,11));
+#endif
+
     int size = end-start;
     int t = 0;
     int m = pow(2,pow(2 , t++));
@@ -15,6 +26,17 @@ Point_2* ch_chan::FindHull(Point_2* start, Point_2* end, Point_2* result){
     vector<vector< Point_2 > > hulls;
     while(m <= size){
         hulls = GetSubHulls(start, end, m);
+#if USE_SDL
+        if(sdl) {
+            sdl->clear_buffer();
+            sdl->draw_points_to_buffer(end - start, start);
+            for (int i = 0; i < hulls.size(); i++) {
+                sdl->draw_hull_to_buffer(hulls[i]);
+            }
+            sdl->display_buffer();
+        }
+        sdl->wait_for_msecs(1000);
+#endif
         FindLeftmostHull(hulls, hIndex, pIndex);
         Point_2 firstPoint =hulls[hIndex][pIndex];
         Point_2 nextPoint;
@@ -23,12 +45,23 @@ Point_2* ch_chan::FindHull(Point_2* start, Point_2* end, Point_2* result){
         for(int i =1;i<m;i++){
             NextPair(hulls,hIndex,pIndex);
             nextPoint = hulls[hIndex][pIndex];
+#if USE_SDL
+            if(sdl) {
+                sdl->draw_line_between(result[k-1], nextPoint, 0, 255, 0);
+                sdl->display_buffer();
+                sdl->wait_for_msecs(500);
+            }
+#endif
             if(nextPoint==firstPoint) break;
             result[k++] = nextPoint;
         }
         if(nextPoint==firstPoint || m == size) break;
         m = min((int)pow(2,pow(2 , t++)),size);
+#if USE_SDL
+        if(sdl) sdl->wait_for_msecs(1000);
+#endif
     }
+
     return result+k;
 }
 
@@ -46,11 +79,13 @@ vector<vector< Point_2 >> ch_chan::GetSubHulls(Point_2 *start, Point_2 *end, int
         hulls.push_back(V);
     }
     delete[](r);
+
     return hulls;
 }
 
 //Returns first point of the convexHull with the leftmost point
 void ch_chan::FindLeftmostHull(vector<vector<Point_2> > hulls, int &hIndex, int &pIndex) {
+    // TODO(erick): Use DOUBLE_MAX
     double minX = 9999;
     for(int i =0;i<hulls.size();i++){
         vector<Point_2> hullI = hulls[i];
@@ -82,7 +117,6 @@ int ch_chan::Rtangent_PointPolyC( Point_2 P, vector<Point_2> V )
         return 0;               // V[0] is the maximum tangent point
 
     for (a=0, b=n;;) {          // start chain = [0,n] with V[n]=V[0]
-        cout<<"loop start"<<endl;
         c = (a + b) / 2;        // midpoint of [a,b], and 0<c<n
         dnC = below(P, V[c+1], V[c]);
         if (dnC && !above(P, V[c-1], V[c]))
@@ -122,12 +156,8 @@ void ch_chan::NextPair(vector<vector<Point_2>> hulls, int &hIndex, int &pIndex){
     Point_2 bestGuess = hulls[hIndex][pIndex];
     for(int i = 0; i<hulls.size();i++){
         if(i==myHullIndex) continue;
-        std::cout<<"p:"<<p.x()<<","<<p.y()<<std::endl;
-        for(int j=0;j<hulls[i].size();j++)
-            std::cout<<"p:"<<hulls[i][j].x()<<","<<hulls[i][j].y();
-        std::cout<<endl;
+
         int index = Rtangent_PointPolyC(p,hulls[i]);
-        cout<<"Left the tangent abys!"<<endl;
         Point_2 guess = hulls[i][index];
         //TODO tratar pontos colineares
         if(Utils::isLeft(p,bestGuess,guess)<0){

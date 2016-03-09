@@ -42,9 +42,10 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "iostream_convex_hull_2.cpp" )
   create_single_source_cgal_program( "vector_convex_hull_2.cpp" )
 
-  add_executable(runMain main.cpp)
+  add_executable(runMain main.cpp ch_chan/SDL.cpp ch_chan/SDL.h)
   target_link_libraries(runMain ch_chan)
   target_link_libraries(runMain Utils)
+  target_link_libraries(runMain SDL2 SDL2_gfx )
 
 else()
   

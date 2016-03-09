@@ -10,6 +10,6 @@ set(HEADER_FILES
 
 set(SOURCE_FILES
         ch_chan.cpp
-        )
+        SDL.cpp SDL.h)
 
 add_library(ch_chan STATIC ${SOURCE_FILES} ${HEADER_FILES})
