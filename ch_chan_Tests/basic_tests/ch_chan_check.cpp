@@ -4,10 +4,10 @@
 
 #include "gtest/gtest.h"
 #include "ch_chan.h"
-#include "Utils.h"
 
 #include <CGAL/convex_hull_2.h>
 #include <vector>
+#include <PointsGenerator.h>
 
 class ch_chanFixture : public ::testing::Test {
 protected:
@@ -180,11 +180,11 @@ TEST_F(ch_chanFixture, belowIsAbove){
     EXPECT_FALSE(actual);
 }
 
-TEST_F(ch_chanFixture, rtangentTriangle){
+TEST_F(ch_chanFixture, Rtangent_PointPolyCTriangle){
     vector<Point_2> v;
     //Triangle
     v.push_back(Point_2(1,1));
-    v.push_back(Point_2(1,0));
+    v.push_back(Point_2(1,0));// expected right tangent
     v.push_back(Point_2(2,0));
     Point_2 p(0,1);
     int actual = ch_chan::Rtangent_PointPolyC(p,v);
@@ -192,7 +192,7 @@ TEST_F(ch_chanFixture, rtangentTriangle){
     EXPECT_EQ(expected,actual);
 }
 
-TEST_F(ch_chanFixture, rtangentSquare){
+TEST_F(ch_chanFixture, Rtangent_PointPolyCSquare){
     vector<Point_2> v;
     //Triangle with point in middle
     v.push_back(Point_2(1,1));
@@ -202,6 +202,36 @@ TEST_F(ch_chanFixture, rtangentSquare){
     Point_2 p(3,3);
     int actual = ch_chan::Rtangent_PointPolyC(p,v);
     int expected = 0;
+    EXPECT_EQ(expected,actual);
+}
+
+TEST_F(ch_chanFixture, Rtangent_PointPolyCTwoPoints){
+    Point_2 p(0,0);
+    vector<Point_2> v;
+    v.push_back(Point_2(1,1));
+    v.push_back(Point_2(1,0));
+    int actual = ch_chan::Rtangent_PointPolyC(p,v);
+    int expected = 1;
+    EXPECT_EQ(expected,actual);
+}
+
+TEST_F(ch_chanFixture, Rtangent_PointPolyCSinglePoint){
+    Point_2 p(0,0);
+    vector<Point_2> v;
+    v.push_back(Point_2(4,1));
+    int actual = ch_chan::Rtangent_PointPolyC(p,v);
+    int expected = 0;
+    EXPECT_EQ(expected,actual);
+}
+
+TEST_F(ch_chanFixture, rtangentLoopCheck){
+    vector<Point_2> v;
+    //Triangle with point in middle
+    v.push_back(Point_2(27.7775,55.397));
+    v.push_back(Point_2(100,0));
+    Point_2 p(0,0);
+    int actual = ch_chan::Rtangent_PointPolyC(p,v);
+    int expected = 1;
     EXPECT_EQ(expected,actual);
 }
 
@@ -275,39 +305,53 @@ TEST_F(ch_chanFixture, NextPair){
     counter++;
 }
 
-TEST_F(ch_chanFixture, FindHull){
-    Point_2 points[8];
-    Point_2 result[8];
-    int i = 0;
-    //square
-    points[i++] = Point_2(0,0);
-    points[i++] = Point_2(1,-0.1);
-    points[i++] = Point_2(1,1.2);
-    points[i++] = Point_2(0.1,1);
-    //Triangle
-    points[i++] = Point_2(2, -0.2);
-    points[i++] = Point_2(3, 0);
-    points[i++] = Point_2(0.5, 0.5);
-    points[i++] = Point_2(2, 1.1);
-    Point_2 *ptr = ch_chan::FindHull(points,points+i,result);
-}
-
-TEST_F(ch_chanFixture, RTangentPointToTwoPoints){
-    Point_2 p(0,0);
-    vector<Point_2> v;
-    v.push_back(Point_2(1,1));
-    v.push_back(Point_2(-1,-1));
-    int actual = ch_chan::Rtangent_PointPolyC(p,v);
-    int expected = 1;
+TEST_F(ch_chanFixture, FindHullTriangle){
+    int nPoints = 16;
+    Point_2 *points = PointsGenerator::GenerateTriangleHull(nPoints);
+    Point_2 *result = new Point_2[nPoints];
+    Point_2 *resultEnd = ch_chan::FindHull(points,points+nPoints,result);
+    int expected = 3;
+    int actual = resultEnd-result;
     EXPECT_EQ(expected,actual);
+    free(points);
+    delete(result);
 }
 
-TEST_F(ch_chanFixture, RTangentPointToSinglePoint){
-    Point_2 p(0,0);
-    vector<Point_2> v;
-    v.push_back(Point_2(4,1));
-    int actual = ch_chan::Rtangent_PointPolyC(p,v);
-    int expected = 0;
+TEST_F(ch_chanFixture, FindHullSquare){
+    int nVertices = 4;
+    int nPoints = 16;
+    Point_2 *points = PointsGenerator::GenerateConvexHull(nVertices,nPoints);
+    Point_2 *result = new Point_2[nPoints];
+    Point_2 *resultEnd = ch_chan::FindHull(points,points+nPoints,result);
+    int expected = nVertices;
+    int actual = resultEnd-result;
     EXPECT_EQ(expected,actual);
+    free(points);
+    delete(result);
 }
 
+TEST_F(ch_chanFixture, FindHullLotsOfPoints){
+    int nVertices = 1<<5;
+    int nPoints = 1<<10;
+    Point_2 *points = PointsGenerator::GenerateConvexHull(nVertices,nPoints);
+    Point_2 *result = new Point_2[nPoints];
+    Point_2 *resultEnd = ch_chan::FindHull(points,points+nPoints,result);
+    int expected = nVertices;
+    int actual = resultEnd-result;
+    EXPECT_EQ(expected,actual);
+    free(points);
+    delete(result);
+}
+
+TEST_F(ch_chanFixture, FindHullWorstCase){
+    int nVertices = 1<<10;
+    int nPoints = nVertices;
+    Point_2 *points = PointsGenerator::GenerateConvexHull(nVertices,nPoints);
+    Point_2 *result = new Point_2[nPoints];
+    Point_2 *resultEnd = ch_chan::FindHull(points,points+nPoints,result);
+    int expected = nVertices;
+    int actual = resultEnd-result;
+    EXPECT_EQ(expected,actual);
+    free(points);
+    delete(result);
+}

@@ -13,7 +13,7 @@ static SDL* sdl;
 
 Point_2* ch_chan::FindHull(Point_2* start, Point_2* end, Point_2* result){
 #if USE_SDL
-    sdl = new SDL(1280, 720, Point_2(-1,-1), Point_2(11,11));
+    sdl = new SDL(1280, 720, Point_2(-100,-100), Point_2(100,100));
 #endif
 
     int size = end-start;
@@ -84,8 +84,8 @@ vector<vector< Point_2 >> ch_chan::GetSubHulls(Point_2 *start, Point_2 *end, int
 }
 
 //Returns first point of the convexHull with the leftmost point
-void ch_chan::FindLeftmostHull(vector<vector<Point_2> > hulls, int &hIndex, int &pIndex) {
     // TODO(erick): Use DOUBLE_MAX
+void ch_chan::FindLeftmostHull(const vector<vector<Point_2> > &hulls, int &hIndex, int &pIndex) {
     double minX = 9999;
     for(int i =0;i<hulls.size();i++){
         vector<Point_2> hullI = hulls[i];
@@ -110,6 +110,7 @@ int ch_chan::Rtangent_PointPolyC( Point_2 P, vector<Point_2> V )
     int     a, b, c;            // indices for edge chain endpoints
     int     upA, dnC;           // test for up direction of edges a and c
     int n = V.size();
+    V.push_back(V[0]);
 
     // rightmost tangent = maximum for the isLeft() ordering
     // test if V[0] is a local maximum
@@ -148,7 +149,7 @@ int ch_chan::Rtangent_PointPolyC( Point_2 P, vector<Point_2> V )
     }
 }
 
-void ch_chan::NextPair(vector<vector<Point_2>> hulls, int &hIndex, int &pIndex){
+void ch_chan::NextPair(const vector<vector<Point_2>> &hulls, int &hIndex, int &pIndex){
     int myHullIndex = hIndex;
     Point_2 p = hulls[hIndex][pIndex];
     hIndex = hIndex;
@@ -156,7 +157,6 @@ void ch_chan::NextPair(vector<vector<Point_2>> hulls, int &hIndex, int &pIndex){
     Point_2 bestGuess = hulls[hIndex][pIndex];
     for(int i = 0; i<hulls.size();i++){
         if(i==myHullIndex) continue;
-
         int index = Rtangent_PointPolyC(p,hulls[i]);
         Point_2 guess = hulls[i][index];
         //TODO tratar pontos colineares
