@@ -12,13 +12,25 @@ PointsGenerator::~PointsGenerator() {
 
 };
 
+void Shuffle(Point_2* &x, int size)
+{
+    for (int i = 0; i < size; ++i)
+    {
+        int position = i + rand() % (size - i);
+        Point_2 tx = x[position];
+        x[position] = x[i];
+        x[i] = tx;
+    }
+}
+
 Point_2* PointsGenerator::GenerateRandomPoints(int size) {
     Point_2* points = (Point_2*)malloc(size*sizeof(Point_2));
     for(int i=0;i<size;i++){
-        double x = rand() % POINTS_RANGE;
-        double y = rand() % POINTS_RANGE;
+        double x = Utils::RandomDouble(POINTS_RANGE);
+        double y = Utils::RandomDouble(POINTS_RANGE);
         points[i] = Point_2(x,y);
     }
+    Shuffle(points,size);
     return points;
 }
 
@@ -39,6 +51,7 @@ Point_2* PointsGenerator::GenerateTriangleHull(int size) {
         if(x+y<POINTS_RANGE)
             points[idx++] = Point_2(x,y);
     }
+    Shuffle(points,size);
     return points;
 }
 
@@ -53,6 +66,7 @@ Point_2* PointsGenerator::GenerateCircleHull(int size) {
         points[i] = Point_2(r*cos(theta),r*sin(theta));
         theta-=delta;
     }
+    Shuffle(points,size);
     return points;
 }
 
@@ -75,5 +89,6 @@ Point_2* PointsGenerator::GenerateConvexHull(int nVertices, int nPoints) {
         if(Utils::isInside(points,point,nVertices))
             points[i++] = Point_2(x,y);
     }
+    Shuffle(points,nPoints);
     return points;
 }
