@@ -10,6 +10,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL2_gfxPrimitives.h>
 
+#define USE_SDL 0
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_2 Point_2;

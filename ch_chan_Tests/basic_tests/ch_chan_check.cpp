@@ -76,10 +76,10 @@ TEST_F(ch_chanFixture, CheckSubHulls){
     points[i++] = Point_2(2,0);
     vector<vector< Point_2 > > hulls = ch_chan::GetSubHulls(points,points+8,4);
     int actual = hulls[0].size();
-    int expected = 3;
+    int expected = 4;
     EXPECT_EQ(actual,expected);
     actual = hulls[1].size();
-    expected = 3;
+    expected = 4;
     EXPECT_EQ(actual,expected);
 }
 
@@ -108,7 +108,7 @@ TEST_F(ch_chanFixture, CheckSubHullsOddNumberOfPoints){
     points[i++] = Point_2(1,1);
     vector<vector< Point_2 > > hulls = ch_chan::GetSubHulls(points,points+i,4);
     for(int i =0;i<4;i++){
-        int expected = i+1;
+        int expected = i+2;
         int actual = hulls[i].size();
         EXPECT_EQ(expected, actual);
     }
@@ -186,6 +186,7 @@ TEST_F(ch_chanFixture, Rtangent_PointPolyCTriangle){
     v.push_back(Point_2(1,1));
     v.push_back(Point_2(1,0));// expected right tangent
     v.push_back(Point_2(2,0));
+    v.push_back(v[0]);
     Point_2 p(0,1);
     int actual = ch_chan::Rtangent_PointPolyC(p,v);
     int expected = 1;
@@ -199,6 +200,7 @@ TEST_F(ch_chanFixture, Rtangent_PointPolyCSquare){
     v.push_back(Point_2(1,0));
     v.push_back(Point_2(2,0));
     v.push_back(Point_2(2,1));
+    v.push_back(v[0]);
     Point_2 p(3,3);
     int actual = ch_chan::Rtangent_PointPolyC(p,v);
     int expected = 0;
@@ -210,6 +212,7 @@ TEST_F(ch_chanFixture, Rtangent_PointPolyCTwoPoints){
     vector<Point_2> v;
     v.push_back(Point_2(1,1));
     v.push_back(Point_2(1,0));
+    v.push_back(v[0]);
     int actual = ch_chan::Rtangent_PointPolyC(p,v);
     int expected = 1;
     EXPECT_EQ(expected,actual);
@@ -219,6 +222,7 @@ TEST_F(ch_chanFixture, Rtangent_PointPolyCSinglePoint){
     Point_2 p(0,0);
     vector<Point_2> v;
     v.push_back(Point_2(4,1));
+    v.push_back(v[0]);
     int actual = ch_chan::Rtangent_PointPolyC(p,v);
     int expected = 0;
     EXPECT_EQ(expected,actual);
@@ -229,6 +233,7 @@ TEST_F(ch_chanFixture, rtangentLoopCheck){
     //Triangle with point in middle
     v.push_back(Point_2(27.7775,55.397));
     v.push_back(Point_2(100,0));
+    v.push_back(v[0]);
     Point_2 p(0,0);
     int actual = ch_chan::Rtangent_PointPolyC(p,v);
     int expected = 1;
@@ -242,12 +247,14 @@ TEST_F(ch_chanFixture, NextPair){
     square.push_back(Point_2(1,-0.1));
     square.push_back(Point_2(1,1.2));
     square.push_back(Point_2(0.1,1));
+    square.push_back(square[0]);
 
     vector<Point_2> triangle;
     //Triangle
     triangle.push_back(Point_2(2,-0.2));
     triangle.push_back(Point_2(3,0));
     triangle.push_back(Point_2(2,1.1));
+    triangle.push_back(triangle[0]);
 
     vector<vector<Point_2> > hulls;
     hulls.push_back(square);

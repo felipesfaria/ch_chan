@@ -4,6 +4,7 @@
 
 #include "SDL.h"
 
+#if USE_SDL
 void my_assert(bool condition, char* message, ...) {
     va_list args_list;
     va_start(args_list, message);
@@ -120,3 +121,4 @@ void SDL::draw_hull_to_buffer(const std::vector<Point_2> &hull) {
     }
     this->draw_line_between(hull[hull.size() - 1], hull[0], 255, 0, 0);
 }
+#endif

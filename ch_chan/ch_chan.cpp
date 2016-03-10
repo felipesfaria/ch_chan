@@ -5,8 +5,6 @@
 #include "ch_chan.h"
 #include "SDL.h"
 
-#define USE_SDL 1
-
 #if USE_SDL
 static SDL* sdl;
 #endif
@@ -65,7 +63,7 @@ Point_2* ch_chan::FindHull(Point_2* start, Point_2* end, Point_2* result){
     return result+k;
 }
 
-vector<vector< Point_2 >> ch_chan::GetSubHulls(Point_2 *start, Point_2 *end, int m) {
+vector<vector< Point_2 >> ch_chan::GetSubHulls(Point_2 *start,Point_2 *end, int m) {
     Point_2 *s,*e,*r;
     int size = end-start;
     int nHulls = ceil((double)size / m);
@@ -76,6 +74,7 @@ vector<vector< Point_2 >> ch_chan::GetSubHulls(Point_2 *start, Point_2 *end, int
         e = start + min((j+1)*m, size);
         Point_2* ptr = CGAL::ch_graham_andrew(s, e, r+j*m);
         vector< Point_2 >  V (r+j*m,ptr);
+        V.push_back(V[0]);
         hulls.push_back(V);
     }
     delete[](r);
@@ -104,13 +103,12 @@ void ch_chan::FindLeftmostHull(const vector<vector<Point_2> > &hulls, int &hInde
 //            n = number of polygon vertices
 //            V = array of vertices for a 2D convex polygon with V[n] = V[0]
 //    Return: index "i" of rightmost tangent point V[i]
-int ch_chan::Rtangent_PointPolyC( Point_2 P, vector<Point_2> V )
+int ch_chan::Rtangent_PointPolyC(const Point_2 &P,const vector<Point_2> &V )
 {
     // use binary search for large convex polygons
     int     a, b, c;            // indices for edge chain endpoints
     int     upA, dnC;           // test for up direction of edges a and c
-    int n = V.size();
-    V.push_back(V[0]);
+    int n = V.size()-1;
 
     // rightmost tangent = maximum for the isLeft() ordering
     // test if V[0] is a local maximum
@@ -153,7 +151,7 @@ void ch_chan::NextPair(const vector<vector<Point_2>> &hulls, int &hIndex, int &p
     int myHullIndex = hIndex;
     Point_2 p = hulls[hIndex][pIndex];
     hIndex = hIndex;
-    pIndex = (pIndex + 1) % hulls[hIndex].size();
+    pIndex = (pIndex + 1) % (hulls[hIndex].size()-1);
     Point_2 bestGuess = hulls[hIndex][pIndex];
     for(int i = 0; i<hulls.size();i++){
         if(i==myHullIndex) continue;

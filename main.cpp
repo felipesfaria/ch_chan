@@ -28,15 +28,15 @@ void CompareConvexHullAlgorithms(Point_2* points, int size){
     Point_2* result = new Point_2[size];
     Point_2 *ptr;
     start = clock();
-    //ptr = CGAL::ch_graham_andrew( points, points+size, result );
+    ptr = CGAL::ch_graham_andrew( points, points+size, result );
     elapsed = clock()-start;
     cout<<"ch_graham_andrew\t"<<size<<"\t"<<ptr-result<<"\t"<<elapsed<<"\t"<<FormatClock(elapsed)<<endl;
     start = clock();
-    //ptr = CGAL::ch_jarvis( points, points+size, result );
+    ptr = CGAL::ch_jarvis( points, points+size, result );
     elapsed = clock()-start;
     cout<<"ch_jarvis\t"<<size<<"\t"<<ptr-result<<"\t"<<elapsed<<"\t"<<FormatClock(elapsed)<<endl;
     start = clock();
-    //ptr = CGAL::convex_hull_2( points, points+size, result );
+    ptr = CGAL::convex_hull_2( points, points+size, result );
     elapsed = clock()-start;
     cout<<"convex_hull_2\t"<<size<<"\t"<<ptr-result<<"\t"<<elapsed<<"\t"<<FormatClock(elapsed)<<endl;
     start = clock();
@@ -49,19 +49,16 @@ int main()
     //Header
     cout<<"algorithm\tnPoints\thullPoints\tclocks\ttime"<<endl;
     Point_2* points;
-    int n, h;
-    n = 1<<10;
-    for(int i = 0; i<1;i++) {
-        points = PointsGenerator::GenerateRandomPoints(n);
-        CompareConvexHullAlgorithms(points, n);
-        h = 3;
-        points = PointsGenerator::GenerateConvexHull(h, n);
-        CompareConvexHullAlgorithms(points, n);
-        h = n;
-        points = PointsGenerator::GenerateConvexHull(h, n);
-        CompareConvexHullAlgorithms(points, n);
-        n=n<<1;
-    }
+    int n=1<<23, h;
+    points = PointsGenerator::GenerateRandomPoints(n);
+    CompareConvexHullAlgorithms(points, n);
+    h = 3;
+    points = PointsGenerator::GenerateConvexHull(h, n);
+    CompareConvexHullAlgorithms(points, n);
+    h = n;
+    points = PointsGenerator::GenerateConvexHull(h, n);
+    //CompareConvexHullAlgorithms(points, n);
+    n=n<<1;
 
     return 0;
 }

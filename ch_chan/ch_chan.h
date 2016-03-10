@@ -17,10 +17,10 @@ typedef K::Point_2 Point_2;
 using namespace std;
 class ch_chan {
 public:
-    static vector<Point_2*> hulls;
+    //static vector<Point_2*> hulls;
     static Point_2* FindHull(Point_2* start, Point_2* end, Point_2* result);
-    static vector<vector< Point_2 > > GetSubHulls(Point_2 *start, Point_2 *end, int m);
+    static vector<vector< Point_2 > > GetSubHulls(Point_2 *start,Point_2 *end, int m);
     static void FindLeftmostHull(const vector<vector<Point_2> > &hulls, int &hIndex, int &pIndex);
-    static int Rtangent_PointPolyC(const Point_2 P, vector<Point_2> V);
+    static int Rtangent_PointPolyC(const Point_2 &P,const vector<Point_2> &V);
     static void NextPair(const vector<vector<Point_2> > &hulls, int &hIndex, int &pIndex);
 };

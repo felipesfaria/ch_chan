@@ -6,10 +6,11 @@ add_definitions(-std=c++11)
 
 set(HEADER_FILES
         ch_chan.h
+        SDL.h
         )
 
 set(SOURCE_FILES
         ch_chan.cpp
-        SDL.cpp SDL.h)
+        SDL.cpp)
 
 add_library(ch_chan STATIC ${SOURCE_FILES} ${HEADER_FILES})
